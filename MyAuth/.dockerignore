@@ -1,0 +1,20 @@
+# Git
+.git
+.gitignore
+
+# Build
+Makefile
+myauth
+
+# Test
+**/*_test.go
+
+# Docker
+.dockerignore
+Dockerfile*
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+*.log

@@ -1,0 +1,54 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE / editors
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Go
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+vendor/
+coverage.txt
+coverage.html
+go.work
+go.work.sum
+
+# .NET / C#
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+.vs/
+packages/
+*.nupkg
+*.snupkg
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Build and run
+*.log
+.env
+.env.local
+.env.*.local
+
+# Docker (local overrides if any)
+docker-compose.override.yml
+.docker/
+
+# Misc
+*.tmp
+*.temp
+.cache/

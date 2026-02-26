@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+option csharp_namespace = "MyProto";
+
+package my_service;
+
+option go_package = "integrationtests/pb";
+
+import "google/protobuf/timestamp.proto";
+
+service MyServiceAPI {
+  rpc Login(LoginRequest) returns (LoginResponse);
+  rpc MyServiceEcho(EchoRequest) returns (EchoResponse);
+  rpc MyServiceSubscribe(EchoRequest) returns (stream EchoResponse);
+  rpc MyServiceShutdown(ShutdownRequest) returns (ShutdownResponse);
+}
+
+message LoginRequest {
+  string username = 1; // mandatory, must not be empty
+  string password = 2;
+  string session_id = 3;  // mandatory, must not be empty
+}
+
+message LoginResponse {
+  string token = 1;                             // JWT for MyServiceAPI.MyService* api access
+  google.protobuf.Timestamp expires_at = 2;     // token expiration time
+  string role = 3;                              // user role
+}
+
+message EchoRequest {
+  string value = 1;
+}
+
+message EchoResponse {
+  string client_value = 1;
+  string server_value = 2;
+  string pod_name = 3;
+  string server_session_id = 4;
+  string client_session_id = 5;
+  int32 index = 6;
+  string server_method = 7;
+}
+
+message ShutdownRequest {}
+
+message ShutdownResponse {
+  string pod_name = 1;
+  string server_session_id = 2;
+  string client_session_id = 3;
+  int32 index = 4;
+  string server_method = 5;
+}

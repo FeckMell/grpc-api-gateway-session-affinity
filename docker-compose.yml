@@ -1,0 +1,93 @@
+# Solution stack: Redis, MyDiscoverer, MyAuth, MyService, MyGateway (single entry point).
+# Client connects to MyGateway on 10000; Login is routed to MyAuth, MyService* methods to MyService instances with sticky-sessions.
+# Run: docker-compose up   or   make up
+
+services:
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6380:6379"   # host 6380 to avoid conflict with local Redis
+    command: redis-server --appendonly no
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 2s
+      timeout: 3s
+      retries: 5
+    networks:
+      - appnet
+
+  mydiscoverer:
+    build:
+      context: ./MyDiscoverer
+      dockerfile: Dockerfile
+    environment:
+      REDIS_ADDR: "redis://redis:6379"
+      SERVICE_PORT_HTTP: "8080"
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - appnet
+
+  myauth:
+    build:
+      context: ./MyAuth
+      dockerfile: Dockerfile
+    environment:
+      SERVICE_PORT_GRPC: "5001"
+      REDIS_ADDR: "redis://redis:6379"
+      JWT_SECRET: "dev-secret-change-in-prod"
+      TOKEN_EXPIRATION: "1h"
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - appnet
+
+  myservice:
+    build:
+      context: ./MyService
+      dockerfile: Dockerfile
+    deploy:
+      replicas: 3
+    environment:
+      SERVICE_PORT_GRPC: "5000"
+      MY_DISCOVERER_URL: "http://mydiscoverer:8080"
+      REGISTRATION_TTL_MS: "300000"
+      REGISTRATION_HEARTBEAT_INTERVAL_MS: "120000"
+      JWT_SECRET: "dev-secret-change-in-prod"
+    depends_on:
+      - mydiscoverer
+    networks:
+      - appnet
+
+  mygateway:
+    build:
+      context: ./MyGateway
+      dockerfile: Dockerfile
+    environment:
+      SERVICE_PORT_GRPC: "10000"
+      CONFIG_PATH: "/etc/mygateway/gateway.yaml"
+      JWT_SECRET: "dev-secret-change-in-prod"
+      RETRY_COUNT: "3"
+      RETRY_TIMEOUT_MS: "5000"
+    configs:
+      - source: gateway_yaml
+        target: /etc/mygateway/gateway.yaml
+    ports:
+      - "10000:10000"   # gRPC
+    depends_on:
+      - myauth
+      - mydiscoverer
+      - myservice
+    networks:
+      - appnet
+
+configs:
+  gateway_yaml:
+    file: ./config/gateway.docker.yaml
+
+networks:
+  appnet:
+    driver: bridge
+ 

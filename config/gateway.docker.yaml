@@ -1,0 +1,28 @@
+# MyGateway config for docker-compose: Login -> MyAuth, MyService* -> MyService (sticky).
+# Required env when running: SERVICE_PORT_GRPC, CONFIG_PATH, RETRY_COUNT, RETRY_TIMEOUT_MS; JWT_SECRET if any route has authorization=required.
+default:
+  action: error
+
+routes:
+  - prefix: /my_service.MyServiceAPI/Login
+    cluster: myauth
+    authorization: none
+    balancer:
+      type: round_robin
+
+  - prefix: /my_service.MyServiceAPI/MyService
+    cluster: my_service
+    authorization: required
+    balancer:
+      type: sticky_sessions
+      header: session-id
+
+clusters:
+  myauth:
+    type: static
+    address: myauth:5001
+
+  my_service:
+    type: dynamic
+    discoverer_url: http://mydiscoverer:8080
+    discoverer_interval_ms: 5000

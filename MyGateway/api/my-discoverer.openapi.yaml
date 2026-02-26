@@ -1,0 +1,165 @@
+openapi: 3.0.0
+info:
+  version: '1.0'
+  title: MyDiscoverer API
+  description: |
+    Instance registration service.
+    Register via POST /v1/register,
+    unregister via POST /v1/unregister/{instance_id},
+    list instances via GET /v1/instances.
+servers:
+  - url: 'http://mydiscoverer:8080'
+    description: MyDiscoverer HTTP service (default Docker Compose host)
+  - url: 'http://localhost:8080'
+    description: Local development
+tags:
+  - name: Registration
+    description: Instance registration and unregistration
+  - name: Instances
+    description: List of registered instances
+paths:
+  /v1/register:
+    post:
+      summary: Register or update instance
+      description: Register or update an instance with the given parameters.
+      operationId: register-instance
+      tags:
+        - Registration
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '200':
+          description: Successful registration (no body)
+        '400':
+          description: Validation error (invalid request body)
+          $ref: '#/components/responses/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          $ref: '#/components/responses/ErrorResponse'
+  /v1/unregister/{instance_id}:
+    post:
+      summary: Unregister instance
+      description: Unregister an instance by instance_id.
+      operationId: unregister-instance
+      tags:
+        - Registration
+      parameters:
+        - name: instance_id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Unique instance identifier
+      responses:
+        '200':
+          description: Instance unregistered (or not found)
+        '500':
+          description: Internal Server Error
+          $ref: '#/components/responses/ErrorResponse'
+  /v1/instances:
+    get:
+      summary: List registered instances
+      description: Returns the list of registered instances.
+      operationId: get-instances
+      tags:
+        - Instances
+      responses:
+        '200':
+          description: List of instances
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InstancesResponse'
+        '500':
+          description: Internal Server Error
+          $ref: '#/components/responses/ErrorResponse'
+components:
+  responses:
+    ErrorResponse:
+      description: An error has occurred
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                $ref: '#/components/schemas/Err'
+            required:
+              - error
+  schemas:
+    RegisterRequest:
+      type: object
+      description: Instance registration request body
+      properties:
+        instance_id:
+          type: string
+          description: Unique instance identifier
+        service_type:
+          type: string
+          description: Service type
+        ipv4:
+          type: string
+          description: Instance IPv4 address
+        port:
+          type: integer
+          description: Instance port
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp
+        ttl_ms:
+          type: integer
+          description: TTL in milliseconds
+      required:
+        - instance_id
+        - service_type
+        - ipv4
+        - port
+        - timestamp
+        - ttl_ms
+    InstancesResponse:
+      type: object
+      description: Response with list of instances
+      properties:
+        instances:
+          type: array
+          items:
+            $ref: '#/components/schemas/InstanceInfo'
+          description: List of registered instances
+      required:
+        - instances
+    InstanceInfo:
+      type: object
+      description: Information for a single instance
+      properties:
+        instance_id:
+          type: string
+          description: Unique instance identifier
+        ipv4:
+          type: string
+          description: IPv4 address
+        port:
+          type: integer
+          description: Port
+      required:
+        - instance_id
+        - ipv4
+        - port
+    Err:
+      type: object
+      title: ErrorObject
+      properties:
+        code:
+          type: string
+          description: Error code
+        message:
+          type: string
+          description: Error message
+        data:
+          type: object
+          description: Optional error payload
+          nullable: true
