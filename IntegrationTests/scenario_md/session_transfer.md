@@ -8,12 +8,6 @@ This scenario demonstrates session transfer to another MyService instance when t
 **Implementation:** [`scenario/session_transfer.go`](../scenario/session_transfer.go)  
 **Run:** `./integrationtests session_transfer` or `make itest_session_transfer`
 
-**Related requirements:**
-- FR-4: Sticky session and client binding to instances
-- FR-5: Failure handling and recovery
-- FR-MG-3: Load balancing (HASH_SET by session-id)
-- FR-MS-7: MyServiceShutdown method
-
 ## Steps
 
 ### 1. Client authentication

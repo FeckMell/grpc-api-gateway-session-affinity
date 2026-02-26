@@ -2,15 +2,10 @@
 
 ## Description
 
-This scenario checks system behavior when all MyService instances are already occupied by active sessions. Four clients connect to the gateway and authenticate. The first three call MyServiceEcho (without MyServiceShutdown), occupying all three instances in a typical three-replica MyService deployment. The fourth client calls MyServiceEcho and must receive from MyGateway code `RESOURCE_EXHAUSTED` (8) with message `"all instances are busy"` (FR-MGW-5, FR-5).
+This scenario checks system behavior when all MyService instances are already occupied by active sessions. Four clients connect to the gateway and authenticate. The first three call MyServiceEcho (without MyServiceShutdown), occupying all three instances in a typical three-replica MyService deployment. The fourth client calls MyServiceEcho and must receive from MyGateway code `RESOURCE_EXHAUSTED` (8) with message `"all instances are busy"`.
 
 **Implementation:** [`scenario/no_instances_available.go`](../scenario/no_instances_available.go)  
 **Run:** `./integrationtests no_instances_available`
-
-**Related requirements:**
-- FR-MGW-5: Handling no instances and JWT (empty list or all instances busy)
-- FR-5: Failure handling and recovery (clear errors when no instances available)
-- FR-MS-3: Session management (one instance — one active session)
 
 ## Steps
 
@@ -53,7 +48,7 @@ After this, all three instances are occupied by clients 1, 2, and 3.
 
 ### 4. Fourth client calls MyServiceEcho (expected error)
 
-Client 4 calls MyServiceEcho with a valid token and its session_id. No instances are free; MyGateway must return an error per FR-MGW-5.
+Client 4 calls MyServiceEcho with a valid token and its session_id. No instances are free; MyGateway must return the error described below.
 
 **Request:**
 - Method: `MyServiceEcho`
@@ -67,7 +62,7 @@ Client 4 calls MyServiceEcho with a valid token and its session_id. No instances
 - Code: `RESOURCE_EXHAUSTED` (8)
 - Message: "all instances are busy"
 
-**Note:** The message must match the constant in MyGateway (FR-MGW-5 / 4.1.4 error code table). The scenario does not call MyServiceShutdown for clients 1–3, so after the test the three instances stay occupied until session expiry or restart.
+**Note:** The message must match the constant in MyGateway (see gateway error mapping). The scenario does not call MyServiceShutdown for clients 1–3, so after the test the three instances stay occupied until session expiry or restart.
 
 ## Interaction diagram
 
@@ -107,9 +102,9 @@ sequenceDiagram
 
 ### How it works
 
-1. **One instance — one session:** Each MyService instance serves only one active session (FR-MS-3). After a client's first MyServiceEcho the instance is considered occupied for that session_id.
+1. **One instance — one session:** Each MyService instance serves only one active session. After a client's first MyServiceEcho the instance is considered occupied for that session_id.
 2. **Sticky session:** MyGateway routes requests with the same session-id to the same instance. Clients 1–3 are bound to three different instances.
-3. **No free instances:** When client 4 sends MyServiceEcho, the gateway finds no free instance (all occupied by 1–3) and returns RESOURCE_EXHAUSTED with "all instances are busy" (FR-MGW-5).
+3. **No free instances:** When client 4 sends MyServiceEcho, the gateway finds no free instance (all occupied by 1–3) and returns RESOURCE_EXHAUSTED with "all instances are busy".
 4. **vs system_overload:** no_instances_available deterministically occupies exactly three instances with three clients and checks the exact message for the fourth; system_overload only checks that with 4 clients and 3 instances at least one client gets an error.
 
 ### Important points

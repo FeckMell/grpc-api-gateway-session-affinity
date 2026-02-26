@@ -7,14 +7,6 @@ The basic scenario demonstrates the standard client workflow with the MyService 
 **Implementation:** [`scenario/basic_workflow.go`](../scenario/basic_workflow.go)  
 **Run:** `./integrationtests basic_workflow`
 
-**Related requirements:**
-- FR-1: Single entry point via API Gateway
-- FR-2: Authentication and authorization
-- FR-4: Sticky Session and client binding to instances
-- FR-AUTH-1: Login method
-- FR-MS-1: MyServiceEcho method
-- FR-MS-7: MyServiceShutdown method
-
 ## Steps
 
 ### 1. Connect to the system
@@ -143,12 +135,12 @@ sequenceDiagram
 
 The scenario checks:
 
-1. **Login (FR-AUTH-1, FR-AUTH-4):**
+1. **Login:**
    - Token is non-empty
    - `expires_at` is not nil
    - `role` is non-empty
 
-2. **MyServiceEcho (FR-MS-1):**
+2. **MyServiceEcho:**
    - `client_value` matches the sent value
    - `server_value == "my_service"`
    - `pod_name` is non-empty

@@ -4,11 +4,7 @@
 
 This scenario demonstrates the server-stream method `MyServiceSubscribe`, which sends the client a stream of messages at a fixed interval. The client connects, subscribes to the stream, and receives continuous updates from a MyService instance.
 
-**Status:** Described scenario (may not be implemented in test code)  
-**Related requirements:**
-- FR-MS-2: MyServiceSubscribe method
-- FR-4: Sticky session and client binding to instances
-- FR-MS-3: Session management
+**Status:** Described scenario (may not be implemented in test code)
 
 ## Steps
 
@@ -236,4 +232,4 @@ stream.CloseSend()
 - **Message interval:** Messages are sent every 5 seconds (configurable in MyService)
 - **Infinite stream:** Stream continues until the client cancels or an error occurs
 - **Sticky session:** The stream is served by one instance for the whole subscription
-- **Implementation:** This scenario is described in requirements (FR-MS-2) but may not be implemented in current integration tests
+- **Implementation:** This scenario may not be implemented in current integration tests

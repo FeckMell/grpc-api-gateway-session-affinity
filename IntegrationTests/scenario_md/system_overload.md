@@ -7,11 +7,6 @@ This scenario demonstrates system behavior when there are more clients than avai
 **Implementation:** [`scenario/system_overload.go`](../scenario/system_overload.go)  
 **Run:** `./integrationtests system_overload`
 
-**Related requirements:**
-- FR-MG-5: Handling no instances
-- FR-MS-3: Session management (one instance = one session)
-- FR-4: Sticky session and client binding to instances
-
 ## Steps
 
 ### 1. Connect four clients

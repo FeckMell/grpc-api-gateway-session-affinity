@@ -2,13 +2,10 @@
 
 ## Description
 
-This scenario checks MyGateway behavior when the MyService backend is unavailable. The client first authenticates via Login (route to MyAuth). Then all MyService instances are stopped (`docker-compose stop myservice`). After a pause the client calls MyServiceEcho; per FR-MGW-5 the gateway must return code `UNAVAILABLE` (14) with message `"backend service unavailable"`. At the end of the scenario MyService is started again (`docker-compose start myservice`).
+This scenario checks MyGateway behavior when the MyService backend is unavailable. The client first authenticates via Login (route to MyAuth). Then all MyService instances are stopped (`docker-compose stop myservice`). After a pause the client calls MyServiceEcho; the gateway must return code `UNAVAILABLE` (14) with message `"backend service unavailable"`. At the end of the scenario MyService is started again (`docker-compose start myservice`).
 
 **Implementation:** [`scenario/gateway_error_unavailable.go`](../scenario/gateway_error_unavailable.go)  
 **Run:** `./integrationtests --compose-file=../docker-compose.yml gateway_error_unavailable`
-
-**Related requirements:**
-- FR-MGW-5: Handling no instances and JWT (MyGateway error codes when backend connection fails)
 
 ## Prerequisites
 

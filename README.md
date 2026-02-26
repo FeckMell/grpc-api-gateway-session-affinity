@@ -26,8 +26,6 @@ flowchart LR
 
 The projects **MyAuth**, **MyDiscoverer**, **MyService**, and **IntegrationTests** in this repository are for **testing and usage examples** only. They demonstrate how to run and extend MyGateway; the main product is MyGateway itself.
 
-Full system requirements are described in [requirements.md](requirements.md).
-
 ---
 
 ## MyGateway
@@ -218,7 +216,6 @@ IntegrationTests/   # Go integration test scenarios
 config/             # Gateway YAML (e.g. gateway.docker.yaml)
 docker-compose.yml  # Full stack (Redis, MyDiscoverer, MyAuth, MyService, MyGateway)
 Makefile            # install, generate, test, itest_*, up, down
-requirements.md     # Full system requirements
 ```
 
 ---
@@ -226,5 +223,4 @@ requirements.md     # Full system requirements
 ## Links
 
 - [MyGateway/README.md](MyGateway/README.md) — detailed technical documentation
-- [requirements.md](requirements.md) — full system requirements
 - [IntegrationTests/README.md](IntegrationTests/README.md) — integration test scenarios

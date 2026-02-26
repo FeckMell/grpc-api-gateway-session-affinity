@@ -7,11 +7,6 @@ This scenario demonstrates sticky session when multiple clients are active. Two 
 **Implementation:** [`scenario/sticky_session.go`](../scenario/sticky_session.go)  
 **Run:** `./integrationtests sticky_session`
 
-**Related requirements:**
-- FR-4: Sticky session and client binding to instances
-- FR-MG-3: Load balancing (HASH_SET by session-id)
-- FR-MS-3: Session management
-
 ## Steps
 
 ### 1. Connect two clients

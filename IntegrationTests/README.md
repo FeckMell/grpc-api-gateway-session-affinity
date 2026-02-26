@@ -1,10 +1,10 @@
 # Integration Tests (MyService)
 
-Integration tests for the MyService system per [requirements.md](../requirements.md). Intended for running by an AI agent or manually.
+Integration tests for the MyService system. Intended for running by an AI agent or manually.
 
 ## Purpose
 
-Tests cover scenarios from the requirements: single entry point (FR-1), authentication (FR-2), MyService* calls via gateway (FR-MG-1), Login / MyServiceEcho / MyServiceShutdown contracts (FR-AUTH-1, FR-MS-1, FR-MS-7), sticky session (session-id in metadata). Each scenario creates a new gRPC client and context.
+Tests cover scenarios: single entry point, authentication, MyService* calls via gateway, Login / MyServiceEcho / MyServiceShutdown contracts, sticky session (session-id in metadata). Each scenario creates a new gRPC client and context.
 
 ## Prerequisites
 
@@ -43,21 +43,38 @@ Tests cover scenarios from the requirements: single entry point (FR-1), authenti
 - `api/Api.proto` — Copy of MyServiceAPI proto (Login, MyServiceEcho, MyServiceSubscribe, MyServiceShutdown); Go client is generated from it.
 - `pb/` — Generated code from proto (do not edit).
 - `scenario/` — Go files with each scenario’s logic and assertions. Each scenario gets its own context and creates a new gRPC client.
-- `scenario_md/` — Markdown scenario descriptions (steps, error codes, requirement links).
+- `scenario_md/` — Markdown scenario descriptions (steps, error codes).
+
+## Scenario documentation
+
+Detailed step-by-step documentation for each scenario:
+
+- [basic_workflow](scenario_md/basic_workflow.md)
+- [login_errors](scenario_md/login_errors.md)
+- [sticky_session](scenario_md/sticky_session.md)
+- [stream_subscription](scenario_md/stream_subscription.md)
+- [stream_subscription_myservice_stop](scenario_md/stream_subscription_myservice_stop.md)
+- [session_transfer](scenario_md/session_transfer.md)
+- [myservice_authentication_errors](scenario_md/myservice_authentication_errors.md)
+- [myservice_shutdown_errors](scenario_md/myservice_shutdown_errors.md)
+- [no_instances_available](scenario_md/no_instances_available.md)
+- [system_overload](scenario_md/system_overload.md)
+- [gateway_error_unauthenticated](scenario_md/gateway_error_unauthenticated.md)
+- [gateway_error_unavailable](scenario_md/gateway_error_unavailable.md)
 
 ## Scenarios
 
-- **basic_workflow** — Login, MyServiceEcho, MyServiceShutdown (FR-1, FR-2, FR-AUTH-1, FR-MS-1, FR-MS-7, sticky session). Validates LoginResponse (token, expires_at, role) and EchoResponse (all fields per FR-MS-1).
-- **login_errors** — Login errors: empty username, empty session_id, invalid credentials (FR-AUTH-2).
-- **sticky_session** — Two clients with different session-id hit different instances (FR-4).
-- **stream_subscription** — MyServiceSubscribe, stream and sticky session checks (FR-MS-2).
-- **session_transfer** — Instance shutdown, session transfer, no instances (FR-5).
-- **myservice_authentication_errors** — Missing/invalid JWT, session-id mismatch (FR-MGW-5).
-- **system_overload** — More clients than instances (FR-6, FR-MGW-5).
-- **gateway_error_unauthenticated** — MyServiceEcho without/invalid token → UNAUTHENTICATED "missing or invalid token" (FR-MGW-5).
-- **gateway_error_unavailable** — MyServiceEcho when backend unavailable → UNAVAILABLE "backend service unavailable" (FR-MGW-5). Requires `--compose-file`.
-- **myservice_shutdown_errors** — MyServiceShutdown without session or session mismatch → PERMISSION_DENIED (FR-MS-7).
-- **no_instances_available** — All instances busy → RESOURCE_EXHAUSTED "all instances are busy" (FR-MGW-5, FR-5).
+- **basic_workflow** — Login, MyServiceEcho, MyServiceShutdown, sticky session. Validates LoginResponse (token, expires_at, role) and EchoResponse (all fields).
+- **login_errors** — Login errors: empty username, empty session_id, invalid credentials.
+- **sticky_session** — Two clients with different session-id hit different instances.
+- **stream_subscription** — MyServiceSubscribe, stream and sticky session checks.
+- **session_transfer** — Instance shutdown, session transfer, no instances.
+- **myservice_authentication_errors** — Missing/invalid JWT, session-id mismatch.
+- **system_overload** — More clients than instances.
+- **gateway_error_unauthenticated** — MyServiceEcho without/invalid token → UNAUTHENTICATED "missing or invalid token".
+- **gateway_error_unavailable** — MyServiceEcho when backend unavailable → UNAVAILABLE "backend service unavailable". Requires `--compose-file`.
+- **myservice_shutdown_errors** — MyServiceShutdown without session or session mismatch → PERMISSION_DENIED.
+- **no_instances_available** — All instances busy → RESOURCE_EXHAUSTED "all instances are busy".
 
 ## Adding scenarios
 
@@ -66,12 +83,10 @@ Tests cover scenarios from the requirements: single entry point (FR-1), authenti
 3. Register the scenario in `scenario.All()` (or in `cmd` via `scenario.Register(...)` depending on registration scheme).
 4. The scenario is then available by name: `./integrationtests my_scenario`.
 
-## Relation to requirements.md
+## What the tests cover
 
-Tests cover:
-
-- **FR-1:** Single entry point via MyGateway (all calls go to the gateway).
-- **FR-2:** Authentication via Login and JWT in subsequent calls.
-- **FR-MG-1:** Routing Login → MyAuth, MyService* → MyService.
-- **FR-AUTH-1, FR-MS-1, FR-MS-7:** Login, MyServiceEcho, MyServiceShutdown contracts and response field checks.
+- **Single entry point:** All calls go via MyGateway.
+- **Authentication:** Login and JWT in subsequent calls.
+- **Routing:** Login → MyAuth, MyService* → MyService.
+- **Contracts:** Login, MyServiceEcho, MyServiceShutdown and response field checks.
 - **Sticky session:** Sending `session-id` in metadata for MyService* calls.

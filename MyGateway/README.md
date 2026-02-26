@@ -56,7 +56,7 @@ Policy is chosen by longest-prefix of the method against rules built from routes
 - On error creating a stream to the backend or on proxy error (s2c/c2s), `OnBackendFailure(route, stickyKey, instanceID)` is called.
 - Pool: unbind sticky key, close connection to that instance, call `Discoverer.UnregisterInstance(instanceID)`.
 - The next request gets a new connection (round_robin or new sticky).
-- **Retry (FR-MGW-4):** For dynamic clusters on NewStream error — up to RETRY_COUNT attempts with RETRY_TIMEOUT_MS per attempt; on each failure OnBackendFailure, next attempt on another instance.
+- **Retry:** For dynamic clusters on NewStream error — up to RETRY_COUNT attempts with RETRY_TIMEOUT_MS per attempt; on each failure OnBackendFailure, next attempt on another instance.
 
 ---
 
@@ -126,9 +126,9 @@ Policy is chosen by longest-prefix of the method against rules built from routes
 | GetConnectionForKey: empty key | `ErrNoAvailableConnInstance` |
 | GetConnectionForKey: no free instance (all occupied by other session-ids) | `ErrNoAvailableConnInstance` |
 
-### 4.4 Error mapping for requirements (FR-MGW-5)
+### 4.4 Error mapping to gRPC status
 
-Mapping is in **service/grpc_error.go**: function `GatewayErrorToGRPC` and stream server interceptor `GatewayErrorToGRPCStreamInterceptor`. Handler returns "raw" errors (from GetConnection, NewStream, forward s2c/c2s); interceptor after handler maps them to gRPC status per requirements table 4.1.4.
+Mapping is in **service/grpc_error.go**: function `GatewayErrorToGRPC` and stream server interceptor `GatewayErrorToGRPCStreamInterceptor`. Handler returns "raw" errors (from GetConnection, NewStream, forward s2c/c2s); interceptor after handler maps them to gRPC status per the table below.
 
 | Condition in code | gRPC code | Message |
 |-------------------|-----------|---------|
@@ -296,8 +296,8 @@ Prefix normalization (in config): if it does not start with `/` it is added; tra
 ### 9.2 Other
 
 - Authorization is only JWT + session-id from route config; other schemes would require new processors in the chain.
-- Retry (FR-MGW-4): For dynamic clusters on NewStream error, up to RETRY_COUNT attempts with RETRY_TIMEOUT_MS per attempt; on each failure OnBackendFailure (unregister + remove from pool), next attempt on another instance.
-- Stream transfer on backend failure (FR-5) is implemented for unary/server-stream in dynamic clusters: on error during forward the gateway opens a new stream to another instance, forwards original metadata and replays the first client message.
+- Retry: For dynamic clusters on NewStream error, up to RETRY_COUNT attempts with RETRY_TIMEOUT_MS per attempt; on each failure OnBackendFailure (unregister + remove from pool), next attempt on another instance.
+- Stream transfer on backend failure: For unary/server-stream in dynamic clusters, on error during forward the gateway opens a new stream to another instance, forwards original metadata and replays the first client message.
 - After server-stream transfer duplicate messages are possible (new backend starts stream from the beginning), as the backend does not support resume by position.
 - TLS for outgoing backend connections is not used (insecure).
 - Adding new routes and clusters is via YAML; new header processors — implement `HeaderProcessor` and add to the chain in main.

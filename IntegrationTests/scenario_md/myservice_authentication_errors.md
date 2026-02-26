@@ -4,9 +4,7 @@
 
 This scenario covers authentication error cases when calling `MyServiceEcho` and `MyServiceSubscribe` in the MyService system. It includes presence of token, token validity, and session-id match.
 
-**Status:** Described scenario (may not be implemented in test code)  
-**Related requirements:**
-- FR-MS-5: Authentication of MyService* requests
+**Status:** Described scenario (may not be implemented in test code)
 
 **Note:** This scenario applies to `MyServiceEcho` and `MyServiceSubscribe`. `MyServiceShutdown` is used only for testing and is not covered here.
 
@@ -229,4 +227,4 @@ if err != nil {
 - **Security:** Authentication errors must not expose internal system details
 - **Consistency:** Error messages should be clear and consistent
 - **Scope:** This scenario applies to `MyServiceEcho` and `MyServiceSubscribe`. `MyServiceShutdown` is used only for testing
-- **Implementation:** Described in requirements (FR-MS-5) but may not be fully implemented in current integration tests
+- **Implementation:** This scenario may not be fully implemented in current integration tests

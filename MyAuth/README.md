@@ -186,11 +186,9 @@ MyAuth/
 
 ---
 
-## Requirements compliance (requirements.md)
+## Implementation summary
 
-The document [requirements.md](../requirements.md) defines the following for **MyAuthService (myauth)**. Below is how the current implementation complies.
-
-| Requirement (requirements.md) | Status | Implementation |
+| Feature | Status | Implementation |
 |------------------------------|--------|-----------------|
 | API: gRPC, port from SERVICE_PORT_GRPC (default 5001), HTTP/2 only | Done | [cmd/config.go](cmd/config.go) — SERVICE_PORT_GRPC; [cmd/main.go](cmd/main.go) — gRPC server on `:SERVICE_PORT_GRPC` |
 | Implements only **Login** (MyServiceAPI); MyServiceEcho/MyServiceSubscribe not declared | Done | Proto has only Login; MyServiceAPI with one method Login |
@@ -202,14 +200,12 @@ The document [requirements.md](../requirements.md) defines the following for **M
 
 ---
 
-## Differences from requirements.md
+## Implementation notes
 
-Requirements in [requirements.md](../requirements.md) are aligned with the implementation for the unified API (`my_service.MyServiceAPI`), per-service proto, and MyGateway routing by method name. Remaining differences; requirements can be updated or the service adjusted.
-
-| Aspect | In requirements.md | In MyAuth implementation |
-|--------|--------------------|---------------------------|
-| **LoginRequest** | Login request fields not listed. | Request: **username**, **password**, **session_id** (required). Response — token, expires_at, role. Worth specifying `session_id` in requirements if required. |
-| **JWT payload** | "login, role, valid_till". | Payload also includes: **session_id**, **issued_at** ([service/jwt.go](service/jwt.go)). Either document extended payload in requirements or simplify implementation to login/role/valid_till. |
+| Aspect | Notes |
+|--------|-------|
+| **LoginRequest** | Request: **username**, **password**, **session_id** (required). Response — token, expires_at, role. |
+| **JWT payload** | Payload includes: **login**, **role**, **valid_till**, **session_id**, **issued_at** ([service/jwt.go](service/jwt.go)). |
 
 Error-to-gRPC mapping is implemented: interceptor in [service/grpc_error.go](service/grpc_error.go), domain codes mapped to status codes (InvalidArgument, PermissionDenied, Internal).
 

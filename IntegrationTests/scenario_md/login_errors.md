@@ -4,10 +4,7 @@
 
 This scenario covers various Login error cases in the MyService system. It includes validation of input data and user credential checks.
 
-**Status:** Described scenario (may not be fully implemented in test code)  
-**Related requirements:**
-- FR-AUTH-2: Login request validation
-- FR-AUTH-3: Credential verification
+**Status:** Described scenario (may not be fully implemented in test code)
 
 ## Sub-scenarios
 
@@ -185,4 +182,4 @@ sequenceDiagram
 
 - **Security:** Error messages should not reveal whether a user with the given username exists
 - **Consistency:** Error messages should be clear and consistent
-- **Implementation:** This scenario is described in requirements (FR-AUTH-2, FR-AUTH-3) but may not be fully implemented in current integration tests
+- **Implementation:** This scenario may not be fully implemented in current integration tests

@@ -208,11 +208,9 @@ MyService/
 
 ---
 
-## Requirements compliance (requirements.md)
+## Implementation summary
 
-The document [requirements.md](../requirements.md) defines the following for **MyService**. Below is how the current implementation complies.
-
-| Requirement (requirements.md) | Status | Implementation |
+| Feature | Status | Implementation |
 |------------------------------|--------|-----------------|
 | gRPC server on port from `SERVICE_PORT_GRPC` (default 5000), HTTP/2 only | Done | [Program.cs](MyService/Program.cs) — port from `SERVICE_PORT_GRPC` (default 5000), HTTP/2 via `HttpProtocols.Http2` |
 | Implements **MyServiceEcho**, **MyServiceSubscribe**, **MyServiceShutdown** (MyServiceAPI) | Done | [EchoService.cs](MyService/EchoService.cs) — methods `MyServiceEcho`, `MyServiceSubscribe`, `MyServiceShutdown` |
@@ -227,7 +225,7 @@ The document [requirements.md](../requirements.md) defines the following for **M
 
 ## Non-functional requirements
 
-### Reliability (NFR-MS-3)
+### Reliability
 
 - **Registration retry**: On MyDiscoverer registration failure the service retries until success (up to 100 attempts with 2 second interval).
 - **MyDiscoverer unavailable**: If MyDiscoverer is unavailable after a successful registration, the service logs heartbeat errors but continues serving client requests.

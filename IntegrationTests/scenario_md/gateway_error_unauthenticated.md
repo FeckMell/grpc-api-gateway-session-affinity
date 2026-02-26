@@ -2,14 +2,10 @@
 
 ## Description
 
-This scenario checks that MyGateway and MyAuth handle missing `session-id` and missing/invalid JWT separately. For MyService* methods, when `session-id` is missing in metadata the gateway returns `UNAUTHENTICATED` with "missing session-id"; when session-id is present but token is missing or invalid — "missing or invalid token". For Login, `session_id` in the request body is required (FR-AUTH-2); when missing MyAuth returns `INVALID_ARGUMENT` "session_id is required". The scenario covers four combinations: (1) both missing, (2) session-id set, authorization missing, (3) session-id missing, authorization set, (4) session-id set, invalid token.
+This scenario checks that MyGateway and MyAuth handle missing `session-id` and missing/invalid JWT separately. For MyService* methods, when `session-id` is missing in metadata the gateway returns `UNAUTHENTICATED` with "missing session-id"; when session-id is present but token is missing or invalid — "missing or invalid token". For Login, `session_id` in the request body is required; when missing MyAuth returns `INVALID_ARGUMENT` "session_id is required". The scenario covers four combinations: (1) both missing, (2) session-id set, authorization missing, (3) session-id missing, authorization set, (4) session-id set, invalid token.
 
 **Implementation:** [`scenario/gateway_error_unauthenticated.go`](../scenario/gateway_error_unauthenticated.go)  
 **Run:** `./integrationtests gateway_error_unauthenticated`
-
-**Related requirements:**
-- FR-MGW-5: Handling no instances and JWT (MyGateway error codes: "missing session-id", "missing or invalid token")
-- FR-AUTH-2: Login request validation (session_id required in body)
 
 ## Steps
 
@@ -21,7 +17,7 @@ The client creates a gRPC connection to the API Gateway at `localhost:10000` (or
 
 **Login:** Call with empty `session_id` in request body (username and password set).
 
-- Expect: error `INVALID_ARGUMENT` (3), message "session_id is required" (MyAuth, FR-AUTH-2).
+- Expect: error `INVALID_ARGUMENT` (3), message "session_id is required" (MyAuth).
 
 **MyServiceEcho:** Call with no metadata (no `session-id`, no `authorization`).
 

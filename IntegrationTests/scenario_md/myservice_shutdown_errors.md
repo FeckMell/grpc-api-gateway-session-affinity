@@ -1,15 +1,11 @@
-# Scenario: MyServiceShutdown errors (FR-MS-7)
+# Scenario: MyServiceShutdown errors
 
 ## Description
 
-This scenario checks two MyServiceShutdown error cases per FR-MS-7: (1) Call MyServiceShutdown without a session set on the instance (server session empty) — expect `PERMISSION_DENIED` with message "Server session is not set"; (2) Call MyServiceShutdown from a second client that may land on the same instance as the first (then server session does not match client session) — expect `PERMISSION_DENIED` with message "Client session mismatch: ..." or "Server session is not set" if the request hits another instance. Both outcomes in the second sub-scenario are acceptable.
+This scenario checks two MyServiceShutdown error cases: (1) Call MyServiceShutdown without a session set on the instance (server session empty) — expect `PERMISSION_DENIED` with message "Server session is not set"; (2) Call MyServiceShutdown from a second client that may land on the same instance as the first (then server session does not match client session) — expect `PERMISSION_DENIED` with message "Client session mismatch: ..." or "Server session is not set" if the request hits another instance. Both outcomes in the second sub-scenario are acceptable. Before performing shutdown the server checks that the server session is set and matches the client session.
 
 **Implementation:** [`scenario/myservice_shutdown_errors.go`](../scenario/myservice_shutdown_errors.go)  
 **Run:** `./integrationtests myservice_shutdown_errors`
-
-**Related requirements:**
-- FR-MS-7: MyServiceShutdown (checks before performing shutdown)
-- FR-4: Sticky session (routing by session-id)
 
 ## Steps
 
@@ -36,7 +32,7 @@ The client performs Login with a unique session_id (e.g. "integration-test-sessi
 - Code: `PERMISSION_DENIED` (7)
 - Message: "Server session is not set"
 
-**Note:** Per FR-MS-7, before performing shutdown it is checked that server session is not empty; otherwise this error is returned.
+**Note:** Before performing shutdown the server checks that the server session is not empty; otherwise this error is returned.
 
 ### 3. Second sub-scenario: two clients, second calls MyServiceShutdown
 

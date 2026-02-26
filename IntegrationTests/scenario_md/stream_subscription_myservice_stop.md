@@ -7,11 +7,6 @@ This scenario verifies that an active `MyServiceSubscribe` stream is transferred
 **Implementation:** [`scenario/stream_subscription_myservice_stop.go`](../scenario/stream_subscription_myservice_stop.go)  
 **Run:** `./integrationtests --compose-file=../docker-compose.yml stream_subscription_myservice_stop`
 
-**Related requirements:**
-- FR-MS-2: MyServiceSubscribe method
-- FR-4: Sticky session and client binding to instances
-- FR-5: Session/connection transfer when instance goes down
-
 ## Prerequisites
 
 - Path to `docker-compose.yml` is required: `--compose-file` flag or `COMPOSE_FILE` env. Without it the scenario fails.
